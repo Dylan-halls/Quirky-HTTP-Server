@@ -1,0 +1,37 @@
+<html>
+<head>
+<style type="text/css">
+ #add{margin-left:200px;}
+ #tit{color:red;margin-left:50px;margin-top:20px;font-family:Arial;font-size:30px;}
+.num{font-family:Budoni;color:green;}
+#res{color:blue;font-family:Sans-serif;margin-left:50px;}
+#result{color:red;width:70px;}
+</style>
+</head>
+<body>
+<?php
+  
+    $num1="0";
+    $num2="0";
+    $res="0";
+ 
+ if(!empty($_POST["num1"]) && !empty($_POST["num2"]) ){
+  $num1=$_POST["num1"];
+  $num2=$_POST["num2"];
+  $res=$num1+$num2;
+ }   
+
+?>
+<form method="post">
+<label id="tit">| Adding Two numbers using php Function |</label>
+<br/><br/>
+<label class="num">Input 1st number : <input type="text" name="num1" value="<?php echo $num1; ?>";/></label><br/><br/>
+<label class="num">Input 2nd number : <input type="text" name="num2" value="<?php echo $num2; ?>" /></label>
+<br/><br/>
+<input type="submit" value="ADD"  id="add"/>
+<input type="reset" value="reset">
+ </form>
+ <label id="res">RESULT : <input type="text" value="<?php echo $res;  ?>"  disabled="yes" id="result" /></label>
+   
+ </body>
+ </html>
