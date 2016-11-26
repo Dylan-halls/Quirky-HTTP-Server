@@ -1,6 +1,102 @@
-import socket, datetime, os
+import socket, datetime, os, base64
 
 now = datetime.datetime.now()
+
+def fire_404(host, port, s, path):
+    err_resp = """\
+HTTP/1.1 404
+Content-Type: text/html
+
+{}
+"""
+    htmlfile = open('Website/404.html', 'r')
+    print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Sending 404 to: ', str(c_addr[0]))[0])
+    htmltext = htmlfile.read()
+    sock.sendall(err_resp.format(''.join(htmltext)))
+    sock.close()
+
+def chrome_404(host, port, s, path):
+    err_resp = """\
+HTTP/1.1 404
+Content-Type: text/html
+
+{}
+"""
+    htmlfile = open('Website/404.html', 'r')
+    print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Sending 404 to: ', str(c_addr[0]))[0])
+    htmltext = htmlfile.read()
+    sock.sendall(''.join(htmltext))
+    sock.close()
+
+
+def chrome_png(host, port, s, path):
+    err_resp = """\
+HTTP/1.1 200 OK
+Content-Type: image/png
+
+{}
+"""
+    try:
+        img_jpeg = open('Website'+path, 'rb')
+        img = img_jpeg.readlines()
+        sock.sendall(''.join(img))
+        sock.close()
+        
+    except Exception as e:
+        chrome_404(host, port, s, path)
+
+def fire_png(host, port, s, path):
+    err_resp = """\
+HTTP/1.1 200 OK
+Content-Type: image/png
+
+{}
+"""
+    try:
+        img_png = open('Website'+path, 'rb')
+        img = img_png.readlines()
+        sock.sendall(err_resp.format(''.join(img)))
+        sock.close()
+        
+    except Exception as e:
+        print(e)
+        htmlfile = open('Website/404_stuff/old_404.html', 'r')
+        print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Sending 404 to: ', str(c_addr[0]))[0])
+        htmltext = htmlfile.read()
+        sock.sendall(err_resp.format(''.join(htmltext)))
+        sock.close()
+
+def chrome_jpeg(host, port, s, path):
+    err_resp = """\
+HTTP/1.1 200 OK
+Content-Type: image/jpeg
+
+{}
+"""     
+    try:
+        img_jpeg = open('Website'+path, 'rb')
+        img = img_jpeg.readlines()
+        sock.sendall(''.join(img))
+        sock.close()
+    
+    except Exception as e:
+        chrome_404(host, port, s, path)
+
+def fire_jpeg(host, port, s, path):
+    err_resp = """\
+HTTP/1.1 200 OK
+Content-Type: image/jpeg
+
+{}
+"""     
+    try:
+        img_jpeg = open('Website'+path, 'rb')
+        img = img_jpeg.readlines()
+        sock.sendall(err_resp.format(''.join(img)))
+        sock.close()
+    
+    except Exception as e:
+        fire_404(host, port, s, path)
 
 def FireFox(host, port, s):
 
@@ -18,25 +114,21 @@ Message: Yew
         sock.sendall(http_resp.format(''.join(htmltext)))
         sock.close()
 
+    elif '.png' in path:
+        fire_png(host, port, s, path)
+
+    elif '.jpeg' in path:
+        fire_jpeg(host, port, s, path)
+
     elif path != '/':
         try:
-            file = open('/root/Desktop/Quirky/Quirky HTTP Server/Website'+path, 'r')
+            file = open('Website'+path, 'r')
             text = file.readlines()
             sock.sendall(http_resp.format(''.join(text)))
             sock.close()
 
         except Exception as e:
-            err_resp = """\
-HTTP/1.1 200 OK
-Content-Type: image/jpeg
-
-{}
-""" 
-            htmlfile = open('Website/404_stuff/old_404.html', 'r')
-            print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Sending 404 to: ', str(c_addr[0]))[0])
-            htmltext = htmlfile.readlines()
-            sock.sendall(err_resp.format(''.join(htmltext)))
-            sock.close()          
+            fire_404(host, port, s, path)
 
 def Phone_Chrome(host, port, s):
     http_resp = """\
@@ -44,7 +136,6 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 
 """
-
     if path == '/':
          htmlfile = open('Website/index.html', 'r')
          htmltext = htmlfile.readlines()
@@ -52,25 +143,23 @@ Content-Type: text/html
          sock.sendall(''.join(htmltext))
          sock.close()
 
+    elif '.png' in path:
+        chrome_png(host, port, s, path)
+
+    elif '.jpeg' in path:
+        chrome_jpeg(host, port, s, path)
+        
+
     elif path != '/':
         try:
-            file = open('/root/Desktop/Quirky/Quirky HTTP Server/Website'+path, 'r')
+            file = open('Website'+path, 'r')
             text = file.readlines()
             sock.sendall(http_resp)
             sock.sendall(''.join(text))
             sock.close()
 
         except Exception as e:
-            err_resp = """\
-HTTP/1.1 404
-""" 
-            htmlfile = open('Website/404_stuff/old_404.html', 'r')
-            print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Sending 404 to: ', str(c_addr[0]))[0])
-            htmltext = htmlfile.readlines()
-            sock.sendall
-            sock.sendall(''.join(htmltext))
-            sock.close()
-
+            chrome_404(host, port, s, path)
 
 def Phone_FireFox(host, port, s):
 
@@ -88,25 +177,21 @@ Message: Yew
         sock.sendall(http_resp.format(''.join(htmltext)))
         sock.close()
 
+    elif '.png' in path:
+        fire_png(host, port, s, path)
+
+    elif '.jpeg' in path:
+        fire_jpeg(host, port, s, path)
+
     elif path != '/':
         try:
-            file = open('/root/Desktop/Quirky/Quirky HTTP Server/Website'+path, 'r')
+            file = open('Website'+path, 'rb')
             text = file.readlines()
             sock.sendall(http_resp.format(''.join(text)))
             sock.close()
 
         except Exception as e:
-            err_resp = """\
-HTTP/1.1 200 OK
-Content-Type: image/jpeg
-
-{}
-""" 
-            htmlfile = open('Website/404_stuff/old_404.html', 'r')
-            print ("[\033[1;94m{}\033[00m] \033[1;31m{}{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), 'Sending 404 to: ', str(c_addr[0]))[0])
-            htmltext = htmlfile.readlines()
-            sock.sendall(err_resp.format(''.join(htmltext)))
-            sock.close()          
+            fire_404(host, port, s, path)          
 
 banner = """
            ___        _      _            _   _ _____ _____ ____  
@@ -145,7 +230,6 @@ while True:
      path,            # /hello
      request_version  # HTTP/1.1
      ) = request_line.split()
-    #print ("[\033[1;94m{}\033[00m] \033[1;33m{}\033[00m".format(now.strftime("%Y-%m-%d %H:%M"), request.strip('[')))
     
     print(raw_request)
 
