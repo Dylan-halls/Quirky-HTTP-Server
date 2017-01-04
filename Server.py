@@ -1,4 +1,4 @@
-import socket, datetime, os, base64
+import socket, datetime, os
 
 now = datetime.datetime.now()
 
